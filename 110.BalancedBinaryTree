@@ -1,0 +1,57 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public boolean isBalanced(TreeNode root) {
+        if(root==null){
+            return true;
+        }
+        return (isBalancedHelper(root, 0) != -1);
+    }
+    
+    public int isBalancedHelperWay1(TreeNode root, int count){
+        if(root==null){
+            return count;
+        }
+        count+=1;
+        
+        int leftCount = isBalancedHelperWay1(root.left, count);
+        if(leftCount == -1 ){
+            return -1;
+        }
+        
+        int rightCount = isBalancedHelperWay1(root.right,count);
+        if(rightCount == -1){
+            return -1;
+        }
+        
+        if(Math.abs(leftCount- rightCount)>1){
+            return -1;
+        } 
+        return Math.max(rightCount, leftCount);
+    }
+    
+    public int isBalancedHelperWay2(TreeNode root, int count){
+        if(root==null){
+            return count;
+        }
+        count+=1;
+        int leftCount= isBalancedHelperWay2(root.left,count);
+        int rightCount = isBalancedHelperWay2(root.right,count);
+
+        if(leftCount==rightCount ){
+            return leftCount;
+        } else if(leftCount+1 == rightCount){
+            return rightCount;
+        } else if(leftCount == rightCount+1){
+            return leftCount;
+        }
+        return -2;
+    }
+}
