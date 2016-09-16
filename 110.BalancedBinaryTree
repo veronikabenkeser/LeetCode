@@ -12,7 +12,8 @@ public class Solution {
         if(root==null){
             return true;
         }
-        return (isBalancedHelper(root, 0) != -1);
+        return (isBalancedHelperWay1(root, 0) != -1);
+        //return (isBalancedHelperWay2(root, 0) != -2);
     }
     
     public int isBalancedHelperWay1(TreeNode root, int count){
