@@ -1,0 +1,106 @@
+/*
+Given a string of numbers and operators, return all possible results from computing all the different possible ways to group numbers and operators. The valid operators are +, - and *.
+
+
+Example 1
+Input: "2-1-1".
+
+((2-1)-1) = 0
+(2-(1-1)) = 2
+Output: [0, 2]
+
+
+Example 2
+Input: "2*3-4*5"
+
+(2*(3-(4*5))) = -34
+((2*3)-(4*5)) = -14
+((2*(3-4))*5) = -10
+(2*((3-4)*5)) = -10
+(((2*3)-4)*5) = 10
+Output: [-34, -14, -10, -10, 10]
+*/
+
+public class Solution {
+    public List<Integer> diffWaysToCompute(String input) {
+        int i=0;
+        char[] inp = input.toCharArray();
+        
+        StringBuilder sb = new StringBuilder();
+        List<String> exp = new ArrayList<String>();
+        List<Integer> operationInd = new ArrayList<Integer>();
+        
+        while(i<inp.length){
+            if(inp[i]-'0'<=9 && inp[i]-'0'>=0){
+                sb.append(inp[i]);
+                i+=1;
+                while(i<inp.length && inp[i]-'0'<=9 && inp[i]-'0'>=0){
+                    sb.append(inp[i]);
+                    i++;
+                }
+                exp.add(sb.toString());
+                sb.setLength(0);
+            } else {
+                exp.add(String.valueOf(inp[i]));
+                operationInd.add(exp.size()-1);
+                i++;
+            }
+           
+        }
+        return count(0, exp.size(), exp, operationInd);
+    }
+    
+      public List<Integer> count(int beg, int end, List<String> exp,  List<Integer> operationInd){
+          List<Integer> res = new ArrayList<Integer>();
+
+          if(beg+1 == end){
+              List<Integer> newL= new ArrayList<Integer>();
+              newL.add(Integer.parseInt(exp.get(beg)));
+              return newL;
+          }
+          
+          for(int i: operationInd){
+              if(i>beg && i<end){
+                  List<Integer> left  = count(beg,i, exp, operationInd);
+                  List<Integer> right = count(i+1, end, exp, operationInd);
+                  addToRes(res, evalExp(i,left,right,exp));
+              }
+          }
+          return res;
+      }
+      
+      public void addToRes( List<Integer> res,  List<Integer> l){
+          for(int i: l){
+              res.add(i);
+          }
+      }
+      
+      public List<Integer> evalExp(int k,  List<Integer> left, List<Integer> right,  List<String> exp){
+          List<Integer> l = new ArrayList<Integer>();
+          
+          for(int i: left){
+              for(int j: right){
+                  l.add(applyOperator(exp.get(k),i,j));
+              }
+          }
+          return l;
+      }
+      
+      public int applyOperator(String op, int a, int b){
+           switch (op) {
+        case "+":
+            return a + b;
+        case "-":
+            return a - b;
+        case "*":
+            return a * b;
+        case "/":
+            if (b == 0)
+                throw new
+                UnsupportedOperationException("Cannot divide by zero");
+            return a / b;
+        default:
+            return 0;
+        }
+      }
+}
