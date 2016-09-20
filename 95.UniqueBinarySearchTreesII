@@ -1,0 +1,92 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    
+     public List<TreeNode> generateTrees(int n) {
+          int[] arr = createArray(n);
+          return buildTree(0, arr.length,arr);
+         
+     }
+     
+     public List<TreeNode> buildTree(int beg, int end, int[] arr){
+         
+         if(beg>=end){
+             return new ArrayList<TreeNode>();
+         }
+         
+         if(beg+1 == end){
+             List<TreeNode> li = new ArrayList<TreeNode>();
+             li.add(new TreeNode(arr[beg]));
+             return li;
+         }
+         List<TreeNode> l= new ArrayList<TreeNode>();
+       
+         
+         for(int i=beg; i<end; i++){
+               List<TreeNode> temp= new ArrayList<TreeNode>();
+         List<TreeNode> temp2= new ArrayList<TreeNode>();
+              List<TreeNode> leftSubtrees= buildTree(beg, i, arr);
+              List<TreeNode> rightSubtrees= buildTree(i+1, end, arr);
+              
+              for(TreeNode n: leftSubtrees){
+                  TreeNode root = new TreeNode(arr[i]);
+                  temp.add(root);
+                  root.left = n;
+              }
+              
+              if(temp.size() == 0){
+                  for(TreeNode n: rightSubtrees){
+                      TreeNode root = new TreeNode(arr[i]);
+                      temp.add(root);
+                      root.right = n;
+                    }
+              } else {
+                 for(TreeNode n:temp){
+                     for(TreeNode r: rightSubtrees){
+                         TreeNode root = getCopy(n);
+                         root.right=r;
+                         temp2.add(root);
+                     }
+                 } 
+                  
+              }
+              
+              if(temp2.size()==0){
+                addRoots(l, temp);  
+              } else {
+                  addRoots(l, temp2);
+              }
+              
+          }
+          return l;
+     }
+    
+    public int[] createArray(int n){
+        int[] arr = new int[n];
+        
+        for(int i=0; i<n; i++){
+            arr[i]=i+1;
+        }
+        return arr;
+    }
+    
+    public void addRoots(List<TreeNode> l , List<TreeNode> temp){
+        for(TreeNode n: temp){
+            l.add(n);
+        }
+    }
+    
+    public TreeNode getCopy(TreeNode node){
+        TreeNode newNode = new TreeNode(node.val);
+        newNode.right = node.right;
+        newNode.left=node.left;
+        return newNode;
+    }
+}
