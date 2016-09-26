@@ -1,0 +1,91 @@
+/*
+Given an integer n, generate all structurally unique BST's (binary search trees) that store values 1...n.
+
+For example,
+Given n = 3, your program should return all 5 unique BST's shown below.
+
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+   
+  Definition for a binary tree node.
+  public class TreeNode {
+      int val;
+      TreeNode left;
+      TreeNode right;
+      TreeNode(int x) { val = x; }
+  }
+ */
+public class Solution {
+    public List<TreeNode> generateTrees(int n){
+        int[] arr = createArray(n);
+        return buildTree(arr,0,arr.length);
+    }
+    
+    public List<TreeNode> buildTree(int[] arr, int start, int end){
+        if(start == end){
+            return new ArrayList<TreeNode>();
+        }
+        
+        if(start+1 == end){
+           List<TreeNode> l =  new ArrayList();
+           l.add(new TreeNode(arr[start]));
+           return l;
+        }
+        
+        List<TreeNode> res = new ArrayList<>();
+        
+        for(int i=start; i<end; i++){
+            List<TreeNode> left = buildTree(arr, start, i);
+            List<TreeNode> right =  buildTree(arr, i+1, end);
+            List<TreeNode> subTrees = new ArrayList<>();
+
+            for(TreeNode node: left){
+                TreeNode root = new TreeNode(arr[i]);
+                root.left = node;
+                subTrees.add(root);
+            }
+            
+            if(right.size()==0){
+               for(TreeNode n: subTrees){
+                   res.add(n);
+               }
+                continue;
+            }
+            
+            if(subTrees.size()==0){
+                for(TreeNode node: right){
+                  TreeNode root = new TreeNode(arr[i]);
+                  root.right = node;
+                  res.add(root);
+              }
+            } else {
+                for(TreeNode node: right){
+                    for(TreeNode root: subTrees){
+                        TreeNode newRoot = cloneNode(root);
+                        newRoot.right = node;
+                        res.add(newRoot);
+                    }
+                }
+            }
+        }
+            return res;
+    }
+    
+    public TreeNode cloneNode(TreeNode node){
+        TreeNode newNode = new TreeNode(node.val);
+        newNode.left = node.left;
+        newNode.right=node.right;
+        return newNode;
+    }
+    
+     public int[] createArray(int n){
+        int[] arr = new int[n];
+        
+        for(int i=0; i<n; i++){
+            arr[i]=i+1;
+        }
+        return arr;
+    }
