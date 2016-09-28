@@ -1,0 +1,130 @@
+/*Given a 2D board and a list of words from the dictionary, find all words in the board.
+
+Each word must be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once in a word.
+
+For example,
+Given words = ["oath","pea","eat","rain"] and board =
+
+[
+  ['o','a','a','n'],
+  ['e','t','a','e'],
+  ['i','h','k','r'],
+  ['i','f','l','v']
+]
+Return ["eat","oath"].
+Note:
+You may assume that all inputs are consist of lowercase letters a-z.
+*/
+
+public class Solution {
+    public List<String> findWords(char[][] board, String[] words) {
+        
+        List<String> res = new ArrayList<String>();
+        
+        if(words == null || words.length==0 || board ==null || board.length==0|| board[0].length==0){
+            return res;
+        }
+        
+        Node root = makeTrie(words);
+        findWords(res, board,root);
+        return res;
+    }
+    
+    public void findWords(List<String> res, char[][] board, Node root){
+        for(int row=0; row<board.length; row++){
+            for(int col=0; col<board[0].length; col++){
+                    doDFS(row, col, res, board, root);
+            }
+        }
+    }
+    
+    public void doDFS(int row, int col, List<String> res, char[][] board, Node node){
+       
+        
+        if(row<0 || col< 0 || row>=board.length || col>= board[0].length || board[row][col]=='#'){
+            return;
+        }
+
+        Node[] children = node.getLetters();
+        char c=board[row][col];
+        node = children[c-'a'];
+        
+        if(node == null){
+            return;
+        }
+    
+        String currWord = node.getWord();
+        if(currWord != null){
+            res.add(currWord);
+        }
+         
+         board[row][col]='#';
+           
+         doDFS(row+1, col, res, board, node);
+         doDFS(row-1, col, res, board, node);
+         doDFS(row, col+1, res, board, node); 
+         doDFS(row, col-1, res, board, node);
+         
+         board[row][col]=c;
+         return;
+        
+    }
+    
+    public Node makeTrie(String[] words){
+        Node root = new Node();
+        
+        for(String word: words){
+            Node curr = root;
+            char[] wordArr = word.toCharArray();
+            
+            for(int i=0; i<wordArr.length; i++){
+                curr = curr.addLetter(wordArr[i]-'a');
+                if(i+1 == wordArr.length){
+                    curr.setLeaf();
+                    curr.recordWord(word);
+                }
+            }
+            
+        }
+        return root;
+    }
+    
+    class Node{
+        private Node[] letters;
+        private boolean isLeaf;
+        private String word;
+    
+        public Node(){
+            letters = new Node[26];
+            isLeaf=false;
+        }
+        public Node addLetter(int i){
+            if(letters[i]==null){
+                Node newNode = new Node();
+                letters[i]=newNode;
+                return newNode;
+            } else{
+                return letters[i];
+            }
+        }
+        public void setLeaf(){
+            isLeaf=true;
+        }
+        
+        public boolean isLeaf(){
+            return isLeaf;
+        }
+        
+        public Node[] getLetters(){
+            return letters;
+        }
+        public void recordWord(String word){
+            this.word = word;
+        }
+        public String getWord(){
+            String oldWord = word;
+            word =null;
+            return oldWord;
+        }
+    }
+}
