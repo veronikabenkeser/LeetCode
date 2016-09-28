@@ -1,0 +1,145 @@
+/*
+There are a total of n courses you have to take, labeled from 0 to n - 1.
+
+Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+
+Given the total number of courses and a list of prerequisite pairs, is it possible for you to finish all courses?
+
+For example:
+
+2, [[1,0]]
+There are a total of 2 courses to take. To take course 1 you should have finished course 0. So it is possible.
+
+2, [[1,0],[0,1]]
+There are a total of 2 courses to take. To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.
+
+Note:
+The input prerequisites is a graph represented by a list of edges, not adjacency matrices. Read more about how a graph is represented.
+*/
+
+public class Solution {
+     //Method 1 : DFS
+     public boolean canFinish(int numCourses, int[][] prerequisites) {
+         if(prerequisites == null){
+            return false;
+        }
+        if(numCourses>=0 && prerequisites.length ==0){
+            return true;
+        }
+    
+        HashMap<Integer, List<Integer>> adjList = createAdjList(prerequisites);
+        return !containsCycle(adjList, numCourses);
+     }
+     
+     public HashMap<Integer, List<Integer>> createAdjList(int[][] prerequisites){
+         HashMap<Integer, List<Integer>> hm = new HashMap<Integer, List<Integer>>();
+         for(int[] arr: prerequisites){
+             if(hm.containsKey(arr[0])){
+                 hm.get(arr[0]).add(arr[1]);
+             } else {
+                 List<Integer> prereq= new ArrayList<Integer>();
+                 prereq.add(arr[1]);
+                 hm.put(arr[0], prereq);
+             }
+         }
+         return hm;
+     }
+     
+     public boolean containsCycle(HashMap<Integer, List<Integer>> adjList, int numCourses){
+         int[] visited = new int[numCourses];
+         int[] currExpl = new int[numCourses];
+         
+         for(int i=0; i<numCourses; i++){
+             if(visited[i]==0){ // has not been visited
+                  if(DFSFoundCycle(i, visited, currExpl, adjList)){
+                      return true;
+                  }
+             }
+         }
+         return false;
+     }
+    
+     public boolean DFSFoundCycle(int curr, int[] visited, int[] currExpl, HashMap<Integer, List<Integer>> adjList){
+           visited[curr]=1; //mark as visited
+           currExpl[curr]=1;
+           
+           if(adjList.containsKey(curr)){
+               for(int i: adjList.get(curr)){
+                   if(currExpl[i] == 1){ //is already in the currently explored group, then found a cycle
+                       return true;
+                  } else if(visited[i] == 0){ //if has not yet been visited
+                        if(DFSFoundCycle(i, visited, currExpl, adjList)){
+                            return true;
+                        }
+                    }
+                }
+            }
+           currExpl[curr]=0; //unmark currExplored
+           return false;
+     }
+     
+     
+ // Method 2: Disjoint Set
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        if(prerequisites == null){
+            return false;
+        }
+        
+        if(numCourses>=0 && prerequisites.length ==0){
+            return true;
+        }
+        
+        int[] parent = new int[numCourses];
+        init(parent);
+        
+        for(int i=0; i<prerequisites.length; i++){
+            int first =  prerequisites[i][0];
+            int second =  prerequisites[i][1];
+            if(!union(first, second, parent, rank)){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public void init(int[] parent){
+        for(int i=0; i<parent.length; i++){
+            parent[i]=i;
+        }
+    }
+    
+    public boolean union(int first, int second, int[] parent, int[] rank){
+         int firstId = find(first,parent);
+         int secondId = find(second,parent);
+         
+         
+         if(firstId != secondId){
+             //union by rank
+             if(rank[first]<rank[second]){ // hang smaller on bigger
+                parent[parent[first]]=parent[second];
+             } else {
+                parent[parent[second]]=parent[first];
+             }  
+             
+             if(rank[first] == rank[second]){
+                 rank[first]=rank[first]+1;
+             }
+             return true;
+         } else {
+             //what we are trying to join with may already be a parent on that tree
+             while(parent[first] != first ){
+                 if(parent[first] == second){
+                     return false;
+                 }
+                  first = parent[first];
+            }
+             
+         }
+    }
+    
+    public int find(int first, int[] parent){
+        while(parent[first] != first){
+            first = parent[first];
+        }
+        return parent[first];
+    }
