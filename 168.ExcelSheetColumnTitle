@@ -1,0 +1,58 @@
+/*
+Given a positive integer, return its corresponding column title as appear in an Excel sheet.
+
+For example:
+
+    1 -> A
+    2 -> B
+    3 -> C
+    ...
+    26 -> Z
+    27 -> AA
+    28 -> AB 
+*/
+
+public class Solution {
+    public String convertToTitle(int n) {
+        if(n==0)return "";
+        
+        char[]arr = new char[27];
+        for(int i=0; i<26;i++){
+            arr[i+1] = (char)('A'+i);
+        }
+        
+        StringBuilder sb = new StringBuilder();
+       
+        if(n<=26){
+            return convertToLetter(n, arr);
+        }
+        int pow = n/26;
+        int remainder = n%26;
+        if(remainder == 0 ){
+            pow--;
+            remainder = 26;
+        }
+        
+        String temp ="";
+        
+        while(pow>26){
+           temp+=(convertToLetter(remainder, arr));
+            remainder= pow%26;
+            pow=pow/26;
+        }
+          
+       
+        sb.append(convertToLetter(pow, arr));
+        sb.append(convertToLetter(remainder, arr));
+        if(temp!=""){
+            sb.append(new StringBuilder(temp).reverse());
+        }
+        
+        return sb.toString();
+    }
+    
+    public String convertToLetter(int n, char[] arr){
+    
+        return String.valueOf(arr[n]);
+    }
+}
