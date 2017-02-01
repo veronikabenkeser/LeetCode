@@ -15,6 +15,27 @@ Given 1->1->1->2->3, return 2->3.
  */
 public class Solution {
     public ListNode deleteDuplicates(ListNode head) {
+         return deleteDuplicatesRec(head);
+    }
+     
+    public ListNode deleteDuplicatesRec(ListNode curr){
+         if(curr == null){
+             return null;
+         }
+         if(curr.next == null){
+             return curr;
+         }
+         if(curr.val != curr.next.val){
+             curr.next = deleteDuplicatesRec(curr.next);
+             return curr;
+         }
+         while(curr.next != null && curr.val == curr.next.val){
+             curr=curr.next;
+         }
+         return deleteDuplicatesRec(curr.next);
+    }
+
+    public ListNode deleteDuplicatesIterative(ListNode head) {
         if(head == null){
             return null;
         }
