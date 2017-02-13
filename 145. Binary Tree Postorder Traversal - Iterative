@@ -1,0 +1,48 @@
+/*
+Given a binary tree, return the postorder traversal of its nodes' values iteratively.
+
+For example:
+Given binary tree {1,#,2,3},
+   1
+    \
+     2
+    /
+   3
+return [3,2,1].
+
+*/
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> l = new ArrayList<>();
+        Stack<TreeNode> s = new Stack<>();
+        TreeNode prev=null;
+        while(true){
+            while(root != null){
+                s.push(root);
+                root=root.left;
+            }
+            if(s.isEmpty()){
+                break;
+            }
+            TreeNode curr = s.peek();
+            if(curr.right != null && !curr.right.equals(prev)){
+                root=curr.right;
+                continue;
+            }
+            curr=s.pop();
+            prev=curr;
+            l.add(curr.val);
+        }
+        return l;
+    }
+}
