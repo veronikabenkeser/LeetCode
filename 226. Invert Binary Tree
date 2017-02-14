@@ -1,0 +1,10 @@
+    public Node flipTree(Node node) {
+        if(node == null){
+            return null;
+        }
+        Node oldLeft = node.left;
+        Node oldRight = node.right;
+        node.right = flipTree(oldLeft);
+        node.left = flipTree(oldRight);
+        return node;
+    }
