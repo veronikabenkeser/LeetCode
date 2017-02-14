@@ -1,0 +1,59 @@
+    private static class Count{
+        private int minInRightSubtree = Integer.MIN_VALUE;
+        private int maxInLeftSubtree = Integer.MIN_VALUE;
+        private int max=0;
+    }
+    static int findLargestBST(Node n) {
+       Count count = new Count();
+       findLargestBSTHelper(n, count);
+       return count.max;
+    }
+    static int findLargestBSTHelper(Node n, Count count){
+         if(n == null){
+             return 0;
+         }
+        
+        int leftNum = findLargestBSTHelper(n.left, count);
+        int tempMaxInLeftSubtree=0;//will be saved on this stack frame. 
+        //If the value is not saved on the stack frame, it will be overriden when we're at the bottom of the other branch
+        
+        if(n.left != null){
+            tempMaxInLeftSubtree = count.minInRightSubtree; //because the max in the left subtree will be on the rightmost branch
+        } else {
+            tempMaxInLeftSubtree = n.val;
+        }
+        
+        int rightNum = findLargestBSTHelper(n.right, count);
+      
+        if(n.right != null){
+            count.minInRightSubtree = count.maxInLeftSubtree; //because the min in the right subtree will be on the leftmost branch
+        }else {
+            count.minInRightSubtree =n.val;
+        }
+        
+        count.maxInLeftSubtree= tempMaxInLeftSubtree;
+        
+        boolean rootIsValid = (n.val <= count.minInRightSubtree && n.val >= count.maxInLeftSubtree 
+                               && isValidLocally(n, n.left, n.right));
+        
+        if(leftNum != -1 && rightNum != -1 && rootIsValid){
+            int totalCount = leftNum+rightNum+1;
+            count.max = Math.max(count.max,  totalCount);
+            return totalCount;
+        }
+        count.max = Math.max(count.max, Math.max(leftNum, rightNum));
+        return -1;
+    }
+
+    static boolean isValidLocally(Node root, Node left, Node right) {
+        if(left != null && right != null){
+            return (root.val >= left.val) && (root.val <= right.val);
+        }
+        if(right != null){
+            return (root.val <= right.val);
+        }
+        if(left!= null){
+           return (root.val >= left.val);
+        }
+        return true;
+    }
