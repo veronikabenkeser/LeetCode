@@ -33,8 +33,8 @@
         
         count.maxInLeftSubtree= tempMaxInLeftSubtree;
         
-        boolean rootIsValid = (n.val <= count.minInRightSubtree && n.val >= count.maxInLeftSubtree 
-                               && isValidLocally(n, n.left, n.right));
+        boolean rootIsValid = (n.val <= count.minInRightSubtree && n.val >= count.maxInLeftSubtree);
+                            
         
         if(leftNum != -1 && rightNum != -1 && rootIsValid){
             int totalCount = leftNum+rightNum+1;
@@ -43,17 +43,4 @@
         }
         count.max = Math.max(count.max, Math.max(leftNum, rightNum));
         return -1;
-    }
-
-    static boolean isValidLocally(Node root, Node left, Node right) {
-        if(left != null && right != null){
-            return (root.val >= left.val) && (root.val <= right.val);
-        }
-        if(right != null){
-            return (root.val <= right.val);
-        }
-        if(left!= null){
-           return (root.val >= left.val);
-        }
-        return true;
     }
