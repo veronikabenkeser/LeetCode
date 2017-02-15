@@ -1,0 +1,24 @@
+    static class Count{
+        private int count=0;
+    }
+    static int findSingleValueTrees(Node n) {
+        Count countObj = new Count();
+        countSingleValueTrees(n, countObj);
+        return countObj.count;
+    }
+    static int countSingleValueTrees(Node node,  Count countObj){
+        if(node == null){
+            return 0;
+        }
+        int numOfSameValuesInLeftSubtree = countSingleValueTrees(node.left, countObj);
+        int numOfSameValuesInRightSubtree = countSingleValueTrees(node.right, countObj);
+        if(numOfSameValuesInLeftSubtree != -1 && numOfSameValuesInRightSubtree !=-1){
+            if((node.left == null && node.right == null) ||( node.right == null && node.left.val == node.val) || 
+              ( node.left == null && node.right.val == node.val) ||  
+              (node.left != null && node.left != null && node.left.val == node.val && node.right.val == node.val)){
+                countObj.count += 1;
+                return 1;
+            }
+        }
+        return -1;
+    }
