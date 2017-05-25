@@ -1,0 +1,41 @@
+/*
+Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+
+For example,
+If n = 4 and k = 2, a solution is:
+
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+*/
+
+public class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> res  = new ArrayList<>();
+        List<Integer> currList  = new ArrayList<>();
+        generatePerms(1, n, k, currList, res);
+        return res;
+    }
+    
+    public void generatePerms(int currNum, int maxNum, int size, List<Integer> currList, List<List<Integer>> res){
+        if(currList.size() == size){
+            res.add(new ArrayList<>(currList));
+            return;
+        }
+        if(currNum > maxNum){
+            return;
+        }
+        //take number
+        currList.add(currNum);
+        generatePerms(currNum+1, maxNum, size, currList, res);
+        
+        //dont take it
+        currList.remove(currList.size()-1);
+        generatePerms(currNum+1, maxNum, size, currList, res);
+    }
+}
