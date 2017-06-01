@@ -1,0 +1,41 @@
+/*
+Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+*/
+
+public class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> curr = new ArrayList<>();
+        findPerms(nums, 0, curr, res);
+        return res;
+    }
+        public void findPerms(int[] nums, int start, List<Integer> curr, List<List<Integer>> res){
+        
+        if(start == nums.length){
+            res.add(new ArrayList<>(curr));
+            return;
+        }
+        Set<Integer> hs = new HashSet<>();
+        for(int s= start; s<nums.length; s++){
+            //handling duplicates
+            if(hs.contains(nums[s])){
+                continue;
+            }
+            hs.add(nums[s]);
+            //swap
+            swap(nums, s, start);
+            curr.add(nums[start]);
+            findPerms(nums, start+1, curr, res);
+            //undo swap
+            swap(nums, s, start);
+            curr.remove(curr.size()-1);
+        }
+    }
+    
+    public void swap(int[] nums, int s, int start){
+            int temp = nums[s];
+            nums[s] = nums[start];
+            nums[start] = temp;
+    }
+}
