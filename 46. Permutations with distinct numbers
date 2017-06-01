@@ -1,0 +1,36 @@
+/*
+Given a collection of distinct numbers, return all possible permutations.
+*/
+
+public class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        List<Integer> curr = new ArrayList<>();
+        findPerms(nums, 0, curr, res);
+        return res;
+    }
+    
+    public void findPerms(int[] nums, int start, List<Integer> curr, List<List<Integer>> res){
+        
+        if(start == nums.length){
+            res.add(new ArrayList<>(curr));
+            return;
+        }
+        
+        for(int s= start; s<nums.length; s++){
+            //swap
+            swap(nums, s, start);
+            curr.add(nums[start]);
+            findPerms(nums, start+1, curr, res);
+            //undo swap
+            swap(nums, s, start);
+            curr.remove(curr.size()-1);
+        }
+    }
+    
+    public void swap(int[] nums, int s, int start){
+            int temp = nums[s];
+            nums[s] = nums[start];
+            nums[start] = temp;
+    }
+}
