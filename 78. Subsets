@@ -1,0 +1,43 @@
+/*
+Given a set of distinct integers, nums, return all possible subsets.
+
+Note: The solution set must not contain duplicate subsets.
+
+For example,
+If nums = [1,2,3], a solution is:
+
+[
+  [3],
+  [1],
+  [2],
+  [1,2,3],
+  [1,3],
+  [2,3],
+  [1,2],
+  []
+]
+*/
+public class Solution {
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>>  res = new ArrayList<>();
+        int max = (int)Math.pow(2, nums.length);
+        
+        for(int i=0; i<max; i++){
+            List<Integer> sublist = new ArrayList<>();
+            int currNum = i;
+            int mask = 1;
+            int count =0 ;
+            
+            while(currNum != 0){
+                if((mask & currNum) == 1){
+                    sublist.add(nums[count]);
+                }
+                currNum >>= 1;
+                count++;
+            }
+            res.add(sublist);
+        }
+        
+        return res;
+    }
+}
