@@ -1,0 +1,39 @@
+/*
+Given a collection of integers that might contain duplicates, nums, return all possible subsets.
+
+Note: The solution set must not contain duplicate subsets.
+
+For example,
+If nums = [1,2,2], a solution is:
+
+[
+  [2],
+  [1],
+  [1,2,2],
+  [2,2],
+  [1,2],
+  []
+]
+*/
+
+public class Solution {
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> l = new ArrayList<>();
+        findPerms(nums, 0, l, new ArrayList<Integer>(), Integer.MIN_VALUE);
+        return l;
+    }
+    public void  findPerms(int[] nums, int index , List<List<Integer>> l, List<Integer> temp, int lastInt){
+        if(index == nums.length){
+            l.add(new ArrayList<>(temp));
+            return;
+        }
+        if(nums[index] != lastInt){
+            temp.add(nums[index]);
+            findPerms(nums, index+1, l, temp, lastInt);
+            temp.remove(temp.size()-1);
+            lastInt = nums[index];
+        }
+        findPerms(nums, index+1, l, temp, lastInt);
+    }
+}
