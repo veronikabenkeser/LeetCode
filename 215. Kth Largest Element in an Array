@@ -1,0 +1,53 @@
+/*
+Find the kth largest element in an unsorted array. Note that it is the kth largest element in the sorted order, not the kth distinct element.
+
+For example,
+Given [3,2,1,5,6,4] and k = 2, return 5.
+
+Note: 
+You may assume k is always valid, 1 ≤ k ≤ array's length.
+*/
+
+public class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        int neededIndex = nums.length-k;
+       
+        int start =0;
+        int end = nums.length-1;
+        int corrIndex  = getCorrIndex(nums, start, end);
+        while(corrIndex != neededIndex){
+            if(corrIndex > neededIndex){
+                end = corrIndex-1;
+                corrIndex  = getCorrIndex(nums, start, corrIndex-1);
+            } else if(corrIndex < neededIndex) {
+                start = corrIndex+1;
+                corrIndex  = getCorrIndex(nums, corrIndex+1, end);
+            }
+        }
+        return nums[corrIndex];
+    }
+ public int getCorrIndex(int[] nums, int start, int end) {
+        int rand = (int)(Math.random()*(end-start) + start);
+        swap(nums, start, rand);
+        int pivot = start;
+        int p0 = start+1, curr=start+1;
+        int p2=end;
+        while(curr<=end && p0 <=p2){
+            if(nums[curr] < nums[pivot]){
+                curr++;
+                p0++;
+            } else {
+                swap(nums, p2, curr);
+                p2--;
+            }
+        }
+     swap(nums, pivot, p2);
+     return p2;
+ }
+    
+    public void swap(int[] nums, int first, int second){
+        int temp = nums[first];
+        nums[first] = nums[second];
+        nums[second] = temp;
+    }
+}
